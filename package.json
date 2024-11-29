@@ -1,0 +1,34 @@
+{
+  "name": "@reve-ai/safetensors-parser",
+  "version": "0.0.1",
+  "description": "Parse and generate safetensor files for use with pytorch.",
+  "exports": {
+    ".": "./dist/src/index.js"
+  },
+  "files": [
+    "dist/src",
+    "package.json",
+    "README.md",
+    "LICENSE.md"
+  ],
+  "scripts": {
+    "build": "rm -rf dist; mkdir -p dist; tsc",
+    "test": "npm run build && node dist/test/index-test.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "github.com/reve-ai/safetensors-parser"
+  },
+  "devDependencies": {
+    "typescript": "^5.0.4"
+  },
+  "keywords": [
+    "huggingface",
+    "tensor",
+    "safetensor",
+    "pytorch",
+    "typescript"
+  ],
+  "author": "Jon Watte",
+  "license": "MIT"
+}

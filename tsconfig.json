@@ -1,0 +1,32 @@
+{
+	"compilerOptions": {
+		"allowImportingTsExtensions": false,
+		"composite": true,
+		"declaration": true,
+		"declarationMap": true,
+		"esModuleInterop": true,
+		"isolatedModules": true,
+		"lib": ["es2023", "WebWorker"],
+		"module": "nodenext",
+		"moduleResolution": "nodenext",
+		"noEmit": false,
+		"noErrorTruncation": true,
+		"noFallthroughCasesInSwitch": true,
+		"noImplicitOverride": true,
+		"noImplicitReturns": true,
+		"noUncheckedIndexedAccess": true,
+		"noUnusedLocals": true,
+		"outDir": "dist",
+		"pretty": true,
+		"resolveJsonModule": false,
+		"rootDirs": ["src", "test"],
+		"skipLibCheck": true,
+		"sourceMap": true,
+		"strict": true,
+		"target": "es2023",
+		"tsBuildInfoFile": "dist/tsconfig.tsbuildinfo",
+		"types": [],
+		"verbatimModuleSyntax": false
+	},
+	"include": ["./src", "./test"]
+}
