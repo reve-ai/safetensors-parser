@@ -25,19 +25,19 @@ export class IgnorableError extends Error {
 // like to try using it anyway, you can pass ignoreInvalid=true.
 export function parseSafeTensors(bytes: Bytes, ignoreInvalid?: boolean): TensorMap {
 	sanityCheckTensorsHeader(!!ignoreInvalid, bytes, bytes.length);
-    const hdrsize = unsafeGetHeaderSize(bytes);
-    const ret = new TensorMap();
-    const j: Object = JSON.parse(new TextDecoder().decode(bytes.slice(8, 8+hdrsize)));
+	const hdrsize = unsafeGetHeaderSize(bytes);
+	const ret = new TensorMap();
+	const j: Object = JSON.parse(new TextDecoder().decode(bytes.slice(8, 8+hdrsize)));
 	sanityCheckTensorsParsed(!!ignoreInvalid, j, bytes.length - 8 - hdrsize);
-    for (const [name, val] of Object.entries(j)) {
-        if (name === "__metadata__") {
-            ret.setAllMetadata(new Map<string, string>(Object.entries(val as Object)));
-        } else {
-            const {dtype, shape, data_offsets} = val as { dtype: string, shape: Shape, data_offsets: OffsetPair };
-            ret.addTensor(name, bytes.slice(8+hdrsize+data_offsets[0], 8+hdrsize+data_offsets[1]), dtype, shape);
-        }
-    }
-    return ret;
+	for (const [name, val] of Object.entries(j)) {
+		if (name === "__metadata__") {
+			ret.setAllMetadata(new Map<string, string>(Object.entries(val as Object)));
+		} else {
+			const {dtype, shape, data_offsets} = val as { dtype: string, shape: Shape, data_offsets: OffsetPair };
+			ret.addTensor(name, bytes.slice(8+hdrsize+data_offsets[0], 8+hdrsize+data_offsets[1]), dtype, shape);
+		}
+	}
+	return ret;
 }
 
 // Given a TensorMap, generate the contents of a safetensors file that contains
@@ -197,9 +197,9 @@ export class TensorMap {
 		return this.metadata.get(name);
 	}
 
-    setMetaValue(name: TensorName, value: string) {
-        this.metadata.set(name, value);
-    }
+	setMetaValue(name: TensorName, value: string) {
+		this.metadata.set(name, value);
+	}
 
 	get allMetadata(): Map<string, string> {
 		return this.metadata;
@@ -209,9 +209,9 @@ export class TensorMap {
 		return this.refs;
 	}
 
-    setAllMetadata(metadata: Map<string, string>) {
-        this.metadata = metadata;
-    }
+	setAllMetadata(metadata: Map<string, string>) {
+		this.metadata = metadata;
+	}
 
 	// Remove a tensor from the map. It's OK if it doesn't exist.
 	removeTensor(name: TensorName | TensorRef) {
@@ -286,106 +286,106 @@ export class TensorRef {
 // of the JSON chunk that starts at offset 8, so if the total file size is smaller
 // than 8+return, the file is likely truncated.
 export function sanityCheckTensorsHeader(ignoreInvalid: boolean, bytes: Bytes, filesize: Integer): Integer {
-    if (!arrayCompare(Array.from(bytes.slice(4,9)), [0, 0, 0, 0, "{".charCodeAt(0)])) {
-        throw new Error("The file header is not a valid safetensors file.");
-    }
-    const val = unsafeGetHeaderSize(bytes);
-    if (val > 100*1024*1024 && !ignoreInvalid) {
-        throw new IgnorableError("The file header is too long to be a valid safetensors file.");
-    }
-    if (filesize < 8+val) {
-        throw new Error("The safetensors file seems truncated or otherwise not valid.");
-    }
-    return val;
+	if (!arrayCompare(Array.from(bytes.slice(4,9)), [0, 0, 0, 0, "{".charCodeAt(0)])) {
+		throw new Error("The file header is not a valid safetensors file.");
+	}
+	const val = unsafeGetHeaderSize(bytes);
+	if (val > 100*1024*1024 && !ignoreInvalid) {
+		throw new IgnorableError("The file header is too long to be a valid safetensors file.");
+	}
+	if (filesize < 8+val) {
+		throw new Error("The safetensors file seems truncated or otherwise not valid.");
+	}
+	return val;
 }
 
 export function unsafeGetHeaderSize(bytes: Bytes): Integer {
-    return ((bytes[0]! | 0) + ((bytes[1]! | 0) * 256) + ((bytes[2]! | 0) * 256 * 256) + ((bytes[3]! | 0) * 256 * 256 * 256)) | 0;
+	return ((bytes[0]! | 0) + ((bytes[1]! | 0) * 256) + ((bytes[2]! | 0) * 256 * 256) + ((bytes[3]! | 0) * 256 * 256 * 256)) | 0;
 }
 
 // Return true if each element compares equal in the arrays
 function arrayCompare(a: Shape, b: Shape): boolean {
-    if (a.length !== b.length) {
-        return false;
-    }
-    for (let i = 0; i < a.length; i++) {
-        if (a[i] !== b[i]) {
-            return false;
-        }
-    }
-    return true;
+	if (a.length !== b.length) {
+		return false;
+	}
+	for (let i = 0; i < a.length; i++) {
+		if (a[i] !== b[i]) {
+			return false;
+		}
+	}
+	return true;
 }
 
 export function sanityCheckTensorsParsed(ignoreInvalid: boolean, j: Object, chunksize: Integer): void {
-    const covered: OffsetPair[] = [];
-    for (const [name, value] of Object.entries(j)) {
-        if (name === "__metadata__") {
-            checkMetadata(ignoreInvalid, value);
-            continue;
-        }
+	const covered: OffsetPair[] = [];
+	for (const [name, value] of Object.entries(j)) {
+		if (name === "__metadata__") {
+			checkMetadata(ignoreInvalid, value);
+			continue;
+		}
 		const tac = new TensorAttributeChecker(chunksize, covered, ignoreInvalid);
-        tac.checkTensorValue(name, value);
-    }
+		tac.checkTensorValue(name, value);
+	}
 }
 
 function checkMetadata(ignoreInvalid: boolean, value: Object): void {
-    for (const [key, strval] of Object.entries(value)) {
-        if (typeof strval !== "string" && !ignoreInvalid) {
-            throw new IgnorableError(`The metadata value ${key} is not a string (${typeof strval}).`);
-        }
-    }
+	for (const [key, strval] of Object.entries(value)) {
+		if (typeof strval !== "string" && !ignoreInvalid) {
+			throw new IgnorableError(`The metadata value ${key} is not a string (${typeof strval}).`);
+		}
+	}
 }
 
 class TensorAttributeChecker {
-    constructor(readonly chunksize: Integer, readonly covered: OffsetPair[], readonly ignoreInvalid: boolean = false, public has_dtype: boolean = false, public has_shape: boolean = false, public has_data_offsets: boolean = false) {}
-    dtype(key: string, val: any) {
-        if (typeof val !== "string") {
-            throw new Error(`The dtype for ${key} is not a string (${typeof val}).`);
-        }
-        this.has_dtype = true;
-    }
-    shape(key: string, val: any) {
-        this.checkTensorShape(key, val);
-        this.has_shape = true;
-    }
-    data_offsets(key: string, val: any) {
-        this.checkDataOffsets(key, val);
-        this.has_data_offsets = true;
-    }
-    attrOk(key: string): boolean {
-        return key === "dtype" || key === "shape" || key === "data_offsets";
-    }
-    assertAttributePresence(name: TensorName) {
-        if (!this.has_dtype) {
-            throw new Error(`The tensor "${name}" is missing the dtype key.`);
-        }
-        if (!this.has_shape) {
-            throw new Error(`The tensor "${name}" is missing the shape key.`);
-        }
-        if (!this.has_data_offsets) {
-            throw new Error(`The tensor "${name}" is missing the data_offsets key.`);
-        }
-    }
-    private checkTensorShape(key: string, val: Object): void {
-        if (!Array.isArray(val)) {
-            throw new Error(`The shape for ${key} is not an array (${typeof val})`);
-        }
-        for (const v of val) {
-            if (typeof v !== "number" && !this.ignoreInvalid) {
-                throw new IgnorableError(`The shape for ${key} is not an array of numbers (${typeof v})`);
-            }
-        }
-    }
-    private checkDataOffsets(key: string, obj: Object): void {
+	constructor(readonly chunksize: Integer, readonly covered: OffsetPair[], readonly ignoreInvalid: boolean = false, public has_dtype: boolean = false, public has_shape: boolean = false, public has_data_offsets: boolean = false) {}
+	dtype(key: string, val: any) {
+		if (typeof val !== "string") {
+			throw new Error(`The dtype for ${key} is not a string (${typeof val}).`);
+		}
+		this.has_dtype = true;
+	}
+	shape(key: string, val: any) {
+		this.checkTensorShape(key, val);
+		this.has_shape = true;
+	}
+	data_offsets(key: string, val: any) {
+		this.checkDataOffsets(key, val);
+		this.has_data_offsets = true;
+	}
+	attrOk(key: string): boolean {
+		return key === "dtype" || key === "shape" || key === "data_offsets";
+	}
+	assertAttributePresence(name: TensorName) {
+		if (!this.has_dtype) {
+			throw new Error(`The tensor "${name}" is missing the dtype key.`);
+		}
+		if (!this.has_shape) {
+			throw new Error(`The tensor "${name}" is missing the shape key.`);
+		}
+		if (!this.has_data_offsets) {
+			throw new Error(`The tensor "${name}" is missing the data_offsets key.`);
+		}
+	}
+	private checkTensorShape(key: string, val: Object): void {
+		if (!Array.isArray(val)) {
+			throw new Error(`The shape for ${key} is not an array (${typeof val})`);
+		}
+		for (const v of val) {
+			if (typeof v !== "number" && !this.ignoreInvalid) {
+			    throw new IgnorableError(`The shape for ${key} is not an array of numbers (${typeof v})`);
+			}
+		}
+	}
+	private checkDataOffsets(key: string, obj: Object): void {
 		if (!Array.isArray(obj) || obj.length !== 2) {
 			throw new Error(`The data_offsets for ${key} is not an array with length 2 (${typeof obj})`);
 		}
 		this.checkDataOffsetBasics(key, obj as OffsetPair);
-        for (const [start, end] of this.covered) {
-            this.checkTensorOverlap(key, start, end, obj as OffsetPair);
-        }
-        this.covered.push(obj as OffsetPair);
-    }
+		for (const [start, end] of this.covered) {
+			this.checkTensorOverlap(key, start, end, obj as OffsetPair);
+		}
+		this.covered.push(obj as OffsetPair);
+	}
 	checkDataOffsetBasics(key: string, val: OffsetPair) {
 		let err: Error | null = null;
 		if (!pairInRange(val, this.chunksize) && !this.ignoreInvalid) {
