@@ -73,7 +73,7 @@ const tm2td = Array.from(tm2.allTensors.entries()).sort();
 if (tm1td.length !== tm2td.length) {
     throw new Error(`The tensor maps have different lengths ${tm1td.length} !== ${tm2td.length}`);
 }
-    for (let i = 0; i < tm1td.length; i++) {
+for (let i = 0; i < tm1td.length; i++) {
     if (tm1td[i]![0]! !== tm2td[i]![0]!) {
         throw new Error(`The tensor maps have different keys: ${tm1td[i]![0]!} !== ${tm2td[i]![0]!}`);
     }

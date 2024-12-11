@@ -1,6 +1,6 @@
 {
   "name": "@reve-ai/safetensors-parser",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Parse and generate safetensor files for use with pytorch.",
   "exports": {
     ".": "./dist/src/index.js"

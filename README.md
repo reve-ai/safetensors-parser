@@ -59,7 +59,7 @@ which you can just import as-is, no bundler required.
 
 The tests live in a single file that you can just run with node.js.
 
-## Can you add convnient dependency wrappers for all my favorite frameworks and image loading libraries?
+## Can you add convenient dependency wrappers for all my favorite frameworks and image loading libraries?
 
 This package has no runtime dependencies, and the only development time
 dependency is typescript, and it will stay that way.
@@ -107,12 +107,12 @@ metadata.
 - `constructor()`: Creates a new empty TensorMap.
 - `getTensor(name)`: Retrieves a tensor by name, or returns undefined if not found.
 - `addTensor(name, ...)`: Adds a new tensor to the map. Throws an error if the name already exists.
-- `setTensor(name, tensor)`: Sets a tensor, replacing any existing tensor with the same name.
+- `setTensor(name, ref)`: Sets a tensor, replacing any existing tensor with the same name.
 - `setMetaValue(name, value)`: Sets a metadata value.
 - `allMetadata`: Getter that returns all metadata as a Map.
 - `allTensors`: Getter that returns all tensors as a Map.
 - `setAllMetadata(metadata)`: Sets all metadata at once.
-- `removeTensor(name)`: Removes a tensor from the map.
+- `removeTensor(name)`: Removes a tensor from the map, accepts name or TensorRef.
 
 ## TensorRef
 
